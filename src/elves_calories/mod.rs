@@ -1,17 +1,32 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::cmp::Ordering;
 
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Debug, Default, Clone, Eq)]
 struct Elve {
     num: i32,
     calories: i32
 }
 
-impl Elve {
-    fn carrying_more_calories_than(self, other: Self) -> bool {
-        self.calories > other.calories
+impl PartialOrd for Elve {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
+}
 
+impl Ord for Elve {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.calories.cmp(&other.calories)
+    }
+}
+
+impl PartialEq for Elve {
+    fn eq(&self, other: &Self) -> bool {
+        self.calories == other.calories
+    }
+}
+
+impl Elve {
     fn add_calories(&mut self, calories: i32) {
         self.calories = self.calories + calories;
     }
@@ -21,28 +36,33 @@ pub fn exec(files_path: String) -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open(files_path + "/input").unwrap();
     let reader = BufReader::new(file);
 
-    let mut elve = Elve::default();
-    let mut curr_elve = Elve::default();
+    let mut elves: Vec<Elve> = vec![Elve::default()];
 
     for line in reader.lines() {
         let line = line?;
-
         let line = line.trim();
-        if line.is_empty() {
-            if curr_elve.carrying_more_calories_than(elve) {
-                elve = curr_elve;
-            }
 
-            curr_elve = Elve {
-                num: curr_elve.num + 1,
+        if line.is_empty() {
+            elves.push(Elve{
+                num: elves.last().unwrap().num + 1,
                 ..Default::default()
-            }
+            });
         } else {
-            curr_elve.add_calories(line.parse()?);
+            elves.last_mut()
+                .unwrap()
+                .add_calories(line.parse()?);
         }
     }
 
+    elves.sort();
 
-    println!("Elve that is carrying the most calories: {:?}", elve);
+    println!("Elve that is carrying the most calories: {:?}", elves.last());
+
+    let sum_of_three: i32 = elves.into_iter()
+        .rev()
+        .take(3)
+        .map(|x| x.calories)
+        .sum();
+    println!("Sum of calories from the top three elves: {}", sum_of_three);
     Ok(())
 }

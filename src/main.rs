@@ -1,4 +1,5 @@
 mod elves_calories;
+mod rock_paper_scissors;
 
 use lazy_static::lazy_static;
 use std::env;
@@ -31,7 +32,8 @@ macro_rules! aoc_progs {
 
 aoc_progs!
 {
-    elves_calories = day(1)
+    elves_calories = day(1),
+    rock_paper_scissors = day(2)
 }
 
 fn run_prog(day: u8) {
