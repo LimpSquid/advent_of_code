@@ -22,7 +22,6 @@ macro_rules! files_path {
 macro_rules! aoc_progs {
     ($($module:ident = day($day:literal)),+) => {
         lazy_static! {
-            // Invariant: named colors are unique
             static ref PROGS: [(u8, fn(String) -> Result<(), Box<dyn std::error::Error>>, String); count!($($module)+)] = [
                 $(($day, $module::exec, files_path!($module)),)+
             ];
