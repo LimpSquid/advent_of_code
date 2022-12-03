@@ -1,6 +1,3 @@
-mod elves_calories;
-mod rock_paper_scissors;
-
 use lazy_static::lazy_static;
 use std::env;
 use clap::Parser;
@@ -20,7 +17,8 @@ macro_rules! files_path {
 }
 
 macro_rules! aoc_progs {
-    ($($module:ident = day($day:literal)),+) => {
+    ($(day($day:literal) = $module:ident),+) => {
+        $(mod $module;)+
         lazy_static! {
             static ref PROGS: [(u8, fn(String) -> Result<(), Box<dyn std::error::Error>>, String); count!($($module)+)] = [
                 $(($day, $module::exec, files_path!($module)),)+
@@ -31,8 +29,9 @@ macro_rules! aoc_progs {
 
 aoc_progs!
 {
-    elves_calories = day(1),
-    rock_paper_scissors = day(2)
+    day(1) = elves_calories,
+    day(2) = rock_paper_scissors,
+    day(3) = rucksack_reorganization
 }
 
 fn run_prog(day: u8) {
