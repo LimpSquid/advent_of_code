@@ -1,5 +1,5 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use crate::utils;
+use std::io::BufRead;
 use std::cmp::Ordering;
 
 #[derive(Debug, Default, Clone, Eq)]
@@ -32,10 +32,8 @@ impl Elve {
     }
 }
 
-pub fn exec(files_path: String) -> Result<(), Box<dyn std::error::Error>> {
-    let file = File::open(files_path + "/input").unwrap();
-    let reader = BufReader::new(file);
-
+pub fn solve(files_dir: String) -> Result<(), Box<dyn std::error::Error>> {
+    let reader = utils::input_file_reader(files_dir)?;
     let mut elves: Vec<Elve> = vec![Elve::default()];
 
     for line in reader.lines() {

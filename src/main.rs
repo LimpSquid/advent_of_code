@@ -1,3 +1,5 @@
+mod utils;
+
 use lazy_static::lazy_static;
 use std::env;
 use clap::Parser;
@@ -7,7 +9,7 @@ macro_rules! count {
     ($x:tt $($xs:tt)*) => (1usize + count!($($xs)*));
 }
 
-macro_rules! files_path {
+macro_rules! files_dir {
     ($module:ident) => {
         env::current_dir().unwrap()
             .display()
@@ -21,7 +23,7 @@ macro_rules! aoc_progs {
         $(mod $module;)+
         lazy_static! {
             static ref PROGS: [(u8, fn(String) -> Result<(), Box<dyn std::error::Error>>, String); count!($($module)+)] = [
-                $(($day, $module::exec, files_path!($module)),)+
+                $(($day, $module::solve, files_dir!($module)),)+
             ];
         }
     }
@@ -43,8 +45,8 @@ fn run_prog(day: u8) {
         return;
     };
 
-    let (h, files_path) = prog.unwrap();
-    h(files_path).unwrap();
+    let (h, files_dir) = prog.unwrap();
+    h(files_dir).unwrap();
 }
 
 #[derive(Parser, Debug)]

@@ -1,5 +1,5 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use crate::utils;
+use std::io::BufRead;
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 enum Hand {
@@ -53,7 +53,7 @@ impl Hand {
         }
     }
 
-    fn win_from(self) -> Hand {
+    fn wins_from(self) -> Hand {
         match self {
             Hand::Rock => Hand::Scissors,
             Hand::Paper => Hand::Rock,
@@ -80,16 +80,14 @@ impl Hand {
     }
 }
 
-pub fn exec(files_path: String) -> Result<(), Box<dyn std::error::Error>> {
-    part_one(&files_path)?;
-    part_two(&files_path)?;
+pub fn solve(files_dir: String) -> Result<(), Box<dyn std::error::Error>> {
+    part_one(files_dir.clone())?;
+    part_two(files_dir.clone())?;
     Ok(())
 }
 
-fn part_one(files_path: &String) -> Result<(), Box<dyn std::error::Error>> {
-    let file = File::open(files_path.to_owned() + "/input").unwrap();
-    let reader = BufReader::new(file);
-
+fn part_one(files_dir: String) -> Result<(), Box<dyn std::error::Error>> {
+    let reader = utils::input_file_reader(files_dir)?;
     let score: u32 = reader.lines()
         .filter_map(|line| match line {
             Ok(line) => play(&line),
@@ -101,10 +99,8 @@ fn part_one(files_path: &String) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn part_two(files_path: &String) -> Result<(), Box<dyn std::error::Error>> {
-    let file = File::open(files_path.to_owned() + "/input").unwrap();
-    let reader = BufReader::new(file);
-
+fn part_two(files_dir: String) -> Result<(), Box<dyn std::error::Error>> {
+    let reader = utils::input_file_reader(files_dir)?;
     let score: u32 = reader.lines()
         .filter_map(|line| match line {
             Ok(line) => play2(&line),
@@ -134,7 +130,7 @@ fn play2(game_match: &str) -> Option<u32> {
     let myself = match game_result {
         GameResult::Draw => opponent,
         GameResult::Win => opponent.defeated_by(),
-        GameResult::Lose => opponent.win_from()
+        GameResult::Lose => opponent.wins_from()
     };
 
     Some(myself.points() + game_result.points())
