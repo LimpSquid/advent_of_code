@@ -33,7 +33,8 @@ aoc_progs!
 {
     day(1) = elves_calories,
     day(2) = rock_paper_scissors,
-    day(3) = rucksack_reorganization
+    day(3) = rucksack_reorganization,
+    day(4) = camp_cleanup
 }
 
 fn run_prog(day: u8) {
