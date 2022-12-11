@@ -35,7 +35,8 @@ aoc_progs!
     day(2) = rock_paper_scissors,
     day(3) = rucksack_reorganization,
     day(4) = camp_cleanup,
-    day(5) = supply_stacks
+    day(5) = supply_stacks,
+    day(6) = tuning_trouble
 }
 
 fn run_prog(day: u8) {
